@@ -2,6 +2,7 @@
 variables
 */
 var model;
+var modelCNN;
 var canvas;
 var classNames = [];
 var canvas;
@@ -126,14 +127,22 @@ function getFrame() {
 
         //get the prediction 
         const pred = model.predict(preprocess(imgData)).dataSync()
+	const predCNN = modelCNN.predict(preprocess(imgData)).dataSync()
+	
 
         //find the top 5 predictions 
         const indices = findIndicesOfMax(pred, 10)
         const probs = findTopValues(pred, 10)
         const names = getClassNames(indices)
-
-        //set the table 
+	//set the table 
         setTable(names, probs)
+	
+	 //find the top 5 predictions 
+        const indicesCNN = findIndicesOfMax(predCNN, 10)
+        const probsCNN = findTopValues(predCNN, 10)
+        const namesCNN = getClassNames(indicesCNN)
+        //set the table 
+        setTable(namesCNN, probsCNN)
     }
 
 }
@@ -230,9 +239,11 @@ async function start(cur_mode) {
     
     //load the model 
     model = await tf.loadLayersModel('mnist/model.json')
+    modelCNN = await tf.loadLayersModel('model/CNN/model.json')
     
     //warm up 
     model.predict(tf.zeros([1, 28, 28, 1]))
+	modelCNN.predict(tf.zeros([1, 28, 28, 1]))
     
     //allow drawing on the canvas 
     allowDrawing()
