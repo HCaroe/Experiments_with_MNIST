@@ -48,7 +48,7 @@ function setTable(top5, probs) {
 		}
     }
     //create the pie 
-    createPie(".pieID.legend", ".pieID.pie");
+    //createPie(".pieID.legend", ".pieID.pie");
 
 }
 
