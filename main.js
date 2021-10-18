@@ -45,7 +45,7 @@ function setTable(top5, probs, type) {
 		if(type=="basic"){
 			let prob = document.getElementById('prob' + i + 'basic');
 			prob.innerHTML = Math.round(probs[i] * 100);
-		} else if (type == "CNN"){
+		} else if (type == "cnn"){
 			let prob = document.getElementById('prob' + i + 'cnn');
 			prob.innerHTML = Math.round(probs[i] * 100);
 		}
@@ -132,14 +132,14 @@ function getFrame() {
         const probs = findTopValues(pred, 10)
         const names = getClassNames(indices)
 	//set the table 
-        setTable(names, probs)
+        setTable(names, probs, "basic")
 	
 	 //find the top 5 predictions 
         const indicesCNN = findIndicesOfMax(predCNN, 10)
         const probsCNN = findTopValues(predCNN, 10)
         const namesCNN = getClassNames(indicesCNN)
         //set the table 
-        setTable(namesCNN, probsCNN)
+        setTable(namesCNN, probsCNN, "cnn")
     }
 
 }
