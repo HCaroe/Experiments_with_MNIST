@@ -38,6 +38,8 @@ set the table of the predictions
 function setTable(top5, probs) {
     //loop over the predictions 
 	console.log(probs)
+	console.log(top5)
+
     for (var i = 0; i < 10; i++) {
         //let sym = document.getElementById('sym' + (i + 1))
         let prob = document.getElementById('prob' + i + 'basic')
@@ -126,8 +128,8 @@ function getFrame() {
         const pred = model.predict(preprocess(imgData)).dataSync()
 
         //find the top 5 predictions 
-        const indices = findIndicesOfMax(pred, 5)
-        const probs = findTopValues(pred, 5)
+        const indices = findIndicesOfMax(pred, 10)
+        const probs = findTopValues(pred, 10)
         const names = getClassNames(indices)
 
         //set the table 
