@@ -2,13 +2,12 @@
 variables
 */
 var model;
-var modelRegularization;
-var modelCNN;
 var canvas;
 var classNames = [];
 var canvas;
 var coords = [];
 var mousePressed = false;
+var mode;
 
 /*
 prepare the drawing canvas 
@@ -37,10 +36,23 @@ $(function() {
 set the table of the predictions 
 */
 function setTable(top5, probs) {
+    //loop over the predictions 
+	console.log(probs)
+	console.log(top5)
+
     for (var i = 0; i < 10; i++) {
+        //let sym = document.getElementById('sym' + (i + 1))
         let prob = document.getElementById('prob' + i + 'basic')
+        //sym.innerHTML = top5[i]
         prob.innerHTML = Math.round(probs[i] * 100)
+		/*if (i == 0) {
+			let pred = document.getElementById('pred')
+			pred.innerHTML = top5[i]	
+		}*/
     }
+    //create the pie 
+    //createPie(".pieID.legend", ".pieID.pie");
+
 }
 
 /*
@@ -114,33 +126,14 @@ function getFrame() {
 
         //get the prediction 
         const pred = model.predict(preprocess(imgData)).dataSync()
-		const predRegularization = modelRegularization.predict(preprocess(imgData)).dataSync()
-		const predCNN = modelCNN.predict(preprocess(imgData)).dataSync()
-		
-	//Basic model
+
         //find the top 5 predictions 
         const indices = findIndicesOfMax(pred, 10)
         const probs = findTopValues(pred, 10)
         const names = getClassNames(indices)
+
         //set the table 
         setTable(names, probs)
-	
-	//Regularization
-		//find the top 5 predictions 
-        const indicesRegularization = findIndicesOfMax(predRegularization, 10)
-        const probsRegularization = findTopValues(predRegularization, 10)
-        const namesRegularization = getClassNames(indicesRegularization)
-        //set the table 
-        setTable(namesRegularization, probsRegularization)
-	
-	//CNN/model	
-		//find the top 5 predictions 
-        const indicesCNN = findIndicesOfMax(predCNN, 10)
-        const probsCNN = findTopValues(predCNN, 10)
-        const namesCNN = getClassNames(indicesCNN)
-        //set the table 
-        setTable(namesCNN, indicesCNN)
-		
     }
 
 }
@@ -159,8 +152,7 @@ function getClassNames(indices) {
 load the class names 
 */
 async function loadDict() {
-	loc = 'class_names.txt'
-	
+	loc = 'mnist/class_names.txt'
     
     await $.ajax({
         url: loc,
@@ -232,18 +224,15 @@ function preprocess(imgData) {
 /*
 load the model
 */
-async function start() {
+async function start(cur_mode) {
+    //arabic or english
+    mode = cur_mode
     
     //load the model 
-    model = await tf.loadLayersModel('model/basic/model.json')
-	modelRegularization = await tf.loadLayersModel('model/regularization/model.json')
-	modelCNN = await tf.loadLayersModel('model/CNN/model.json')
-	
+    model = await tf.loadLayersModel('mnist/model.json')
     
     //warm up 
     model.predict(tf.zeros([1, 28, 28, 1]))
-	modelRegularization.predict(tf.zeros([1, 28, 28, 1]))
-	modelCNN.predict(tf.zeros([1, 28, 28, 1]))
     
     //allow drawing on the canvas 
     allowDrawing()
@@ -257,8 +246,10 @@ allow drawing on canvas
 */
 function allowDrawing() {
     canvas.isDrawingMode = 1;
-	document.getElementById('status').innerHTML = 'Model Loaded';
-        
+    if (mode == 'en')
+        document.getElementById('status').innerHTML = 'Model Loaded';
+    else
+        document.getElementById('status').innerHTML = 'تم التحميل';
     $('button').prop('disabled', false);
     var slider = document.getElementById('myRange');
     slider.oninput = function() {
