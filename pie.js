@@ -1,4 +1,4 @@
-function sliceSize(dataNum, dataTotal) {
+/*function sliceSize(dataNum, dataTotal) {
   return (dataNum / dataTotal) * 360;
 }
 function addSlice(sliceSize, pieElement, offset, sliceID, color) {
@@ -51,4 +51,4 @@ function createPie(dataElement, pieElement) {
     $(dataElement+" li:nth-child("+(i+1)+")").css("border-color", color[i]);
     offset += size;
   }
-}
+}*/
