@@ -37,7 +37,8 @@ set the table of the predictions
 */
 function setTable(top5, probs) {
     //loop over the predictions 
-    for (var i = 0; i < top5.length; i++) {
+	console.log(probs)
+    for (var i = 0; i < 10; i++) {
         //let sym = document.getElementById('sym' + (i + 1))
         let prob = document.getElementById('prob' + i + 'basic')
         //sym.innerHTML = top5[i]
