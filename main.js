@@ -36,23 +36,20 @@ $(function() {
 /*
 set the table of the predictions 
 */
-function setTable(top5, probs) {
+function setTable(top5, probs, type) {
     //loop over the predictions 
 	console.log(probs)
 	console.log(top5)
 
     for (var i = 0; i < 10; i++) {
-        //let sym = document.getElementById('sym' + (i + 1))
-        let prob = document.getElementById('prob' + i + 'basic')
-        //sym.innerHTML = top5[i]
-        prob.innerHTML = Math.round(probs[i] * 100)
-		/*if (i == 0) {
-			let pred = document.getElementById('pred')
-			pred.innerHTML = top5[i]	
-		}*/
+		if(type=="basic"){
+			let prob = document.getElementById('prob' + i + 'basic');
+			prob.innerHTML = Math.round(probs[i] * 100);
+		} else if (type == "CNN"){
+			let prob = document.getElementById('prob' + i + 'cnn');
+			prob.innerHTML = Math.round(probs[i] * 100);
+		}
     }
-    //create the pie 
-    //createPie(".pieID.legend", ".pieID.pie");
 
 }
 
