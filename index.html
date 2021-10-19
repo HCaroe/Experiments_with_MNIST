@@ -57,6 +57,16 @@ limitations under the License.
 		<p>The basic and regularization is simply a fully connect neural network. It takes the input flattens it and dense it to the 10 classes. We can plot the weights for them:</p>
 		<img src="basic_weights.png" alt="weights of the basic model">
 		<img src="reg_weights.png" alt="weights of the regularization model">
+		
+		<p>The CNN2 uses the same architecture as the CNN however been using the RMSprop optimizer (with learning_rate=0.0001 and decay=1e-6) instead of SDG. It also uses a DataImageGenerator that have the folowing settings:</p>
+		<ul>
+			<li>rotation_range=35</li>
+			<li>width_shift_range=0.2</li>
+			<li>height_shift_range=0.2</li>
+			<li>zoom_range=[0.7,2.5]</li>
+		</ul>
+		<p>It's been runnning for 40 epochs with a batch size of 64, taking about 30 minutes to get a training loss of 0.2638, training accuracy of 0.9220 and a validation loss of 0.1815 and calidation accuracy of 0.9461</p>
+		
     </section>
 	<section>
 		<p class='section-head'>Status</p>
@@ -76,8 +86,8 @@ limitations under the License.
 	  <table>
 		<tr>
 			<th>Label</th>
-			<th>basic</th>
-			<th>basic /w λ</th>
+			<th>Basic</th>
+			<th>Regularization</th>
 			<th>CNN</th>
 			<th>CNN2</th>
 		</tr>
