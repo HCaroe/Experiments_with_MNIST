@@ -3,6 +3,7 @@ variables
 */
 var model;
 var modelCNN;
+var modelCNN2;
 var modelReg;
 var canvas;
 var classNames = [];
@@ -48,6 +49,9 @@ function setTable(top5, probs, type) {
 			prob.innerHTML = Math.round(probs[i] * 100);
 		} else if (type == "cnn"){
 			let prob = document.getElementById('prob' + i + 'cnn');
+			prob.innerHTML = Math.round(probs[i] * 100);
+		} else if (type == "cnn2"){
+			let prob = document.getElementById('prob' + i + 'cnn2');
 			prob.innerHTML = Math.round(probs[i] * 100);
 		} else if (type == "reg"){
 			let prob = document.getElementById('prob' + i + 'reg');
@@ -129,6 +133,7 @@ function getFrame() {
         //get the prediction 
         const pred = model.predict(preprocess(imgData)).dataSync()
 	const predCNN = modelCNN.predict(preprocess(imgData)).dataSync()
+	const predCNN2 = modelCNN2.predict(preprocess(imgData)).dataSync()
 	const predReg = modelReg.predict(preprocess(imgData)).dataSync()
 	
 	
@@ -153,6 +158,13 @@ function getFrame() {
         const namesReg = getClassNames(indicesReg)
         //set the table 
         setTable(namesReg, probsReg, "reg")
+	    
+    		//find the top 5 predictions 
+        const indicesCNN2 = findIndicesOfMax(predCNN2, 10)
+        const probsCNN2 = findTopValues(predCNN2, 10)
+        const namesCNN2 = getClassNames(indicesCNN2)
+        //set the table 
+        setTable(namesCNN2, probsCNN2, "cnn2")
     }
 
 }
@@ -250,12 +262,14 @@ async function start(cur_mode) {
     //load the model 
     model = await tf.loadLayersModel('mnist/model.json')
     modelCNN = await tf.loadLayersModel('model/CNN/model.json')
+		modelCNN2 = await tf.loadLayersModel('model/CNN2/model.json')
     modelReg = await tf.loadLayersModel('model/reg/model.json') //await tf.loadLayersModel('model/regularization/model.json')
     
     //warm up 
     model.predict(tf.zeros([1, 28, 28, 1]))
     modelCNN.predict(tf.zeros([1, 28, 28, 1]))
     modelReg.predict(tf.zeros([1, 28, 28, 1]))
+		modelCNN2.predict(tf.zeros([1, 28, 28, 1]))
     
     //allow drawing on the canvas 
     allowDrawing()
