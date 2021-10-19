@@ -49,7 +49,7 @@ function setTable(top5, probs, type) {
 		} else if (type == "cnn"){
 			let prob = document.getElementById('prob' + i + 'cnn');
 			prob.innerHTML = Math.round(probs[i] * 100);
-		} else if (type == "regularization"){
+		} else if (type == "reg"){
 			let prob = document.getElementById('prob' + i + 'reg');
 			prob.innerHTML = Math.round(probs[i] * 100);
 		}
@@ -150,9 +150,9 @@ function getFrame() {
     	 //find the top 5 predictions 
         const indicesReg = findIndicesOfMax(predReg, 10)
         const probsReg = findTopValues(predReg, 10)
-        const namesRegularization = getClassNames(indicesReg)
+        const namesReg = getClassNames(indicesReg)
         //set the table 
-        setTable(namesRegularization, probsReg, "regularization")
+        setTable(namesReg, probsReg, "reg")
     }
 
 }
