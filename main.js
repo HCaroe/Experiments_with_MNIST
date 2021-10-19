@@ -3,7 +3,7 @@ variables
 */
 var model;
 var modelCNN;
-var modelRegularization;
+var modelReg;
 var canvas;
 var classNames = [];
 var canvas;
@@ -50,7 +50,7 @@ function setTable(top5, probs, type) {
 			let prob = document.getElementById('prob' + i + 'cnn');
 			prob.innerHTML = Math.round(probs[i] * 100);
 		} else if (type == "regularization"){
-			let prob = document.getElementById('prob' + i + 'regularization');
+			let prob = document.getElementById('prob' + i + 'reg');
 			prob.innerHTML = Math.round(probs[i] * 100);
 		}
     }
@@ -129,7 +129,7 @@ function getFrame() {
         //get the prediction 
         const pred = model.predict(preprocess(imgData)).dataSync()
 	const predCNN = modelCNN.predict(preprocess(imgData)).dataSync()
-	const predRegularization = modelRegularization.predict(preprocess(imgData)).dataSync()
+	const predReg = modelReg.predict(preprocess(imgData)).dataSync()
 	
 	
 
@@ -148,11 +148,11 @@ function getFrame() {
         setTable(namesCNN, probsCNN, "cnn")
 	    
     	 //find the top 5 predictions 
-        const indicesRegularization = findIndicesOfMax(predRegularization, 10)
-        const probsRegularization = findTopValues(predRegularization, 10)
-        const namesRegularization = getClassNames(indicesRegularization)
+        const indicesReg = findIndicesOfMax(predReg, 10)
+        const probsReg = findTopValues(predReg, 10)
+        const namesRegularization = getClassNames(indicesReg)
         //set the table 
-        setTable(namesRegularization, probsRegularization, "regularization")
+        setTable(namesRegularization, probsReg, "regularization")
     }
 
 }
@@ -255,7 +255,7 @@ async function start(cur_mode) {
     //warm up 
     model.predict(tf.zeros([1, 28, 28, 1]))
 	modelCNN.predict(tf.zeros([1, 28, 28, 1]))
-	modelRegularization.predict(tf.zeros([1, 28, 28, 1]))
+	modelReg.predict(tf.zeros([1, 28, 28, 1]))
     
     //allow drawing on the canvas 
     allowDrawing()
