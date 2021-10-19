@@ -3,6 +3,7 @@ variables
 */
 var model;
 var modelCNN;
+var modelRegularization;
 var canvas;
 var classNames = [];
 var canvas;
@@ -47,6 +48,9 @@ function setTable(top5, probs, type) {
 			prob.innerHTML = Math.round(probs[i] * 100);
 		} else if (type == "cnn"){
 			let prob = document.getElementById('prob' + i + 'cnn');
+			prob.innerHTML = Math.round(probs[i] * 100);
+		} else if (type == "regularization"){
+			let prob = document.getElementById('prob' + i + 'regularization');
 			prob.innerHTML = Math.round(probs[i] * 100);
 		}
     }
@@ -125,6 +129,8 @@ function getFrame() {
         //get the prediction 
         const pred = model.predict(preprocess(imgData)).dataSync()
 	const predCNN = modelCNN.predict(preprocess(imgData)).dataSync()
+	const predRegularization = modelRegularization.predict(preprocess(imgData)).dataSync()
+	
 	
 
         //find the top 5 predictions 
@@ -140,6 +146,13 @@ function getFrame() {
         const namesCNN = getClassNames(indicesCNN)
         //set the table 
         setTable(namesCNN, probsCNN, "cnn")
+	    
+    	 //find the top 5 predictions 
+        const indicesRegularization = findIndicesOfMax(predRegularization, 10)
+        const probsRegularization = findTopValues(predRegularization, 10)
+        const namesRegularization = getClassNames(indicesRegularization)
+        //set the table 
+        setTable(namesRegularization, probsRegularization, "regularization")
     }
 
 }
@@ -237,10 +250,12 @@ async function start(cur_mode) {
     //load the model 
     model = await tf.loadLayersModel('mnist/model.json')
     modelCNN = await tf.loadLayersModel('model/CNN/model.json')
+    modelCNN = await tf.loadLayersModel('model/regularization/model.json')
     
     //warm up 
     model.predict(tf.zeros([1, 28, 28, 1]))
 	modelCNN.predict(tf.zeros([1, 28, 28, 1]))
+	modelRegularization.predict(tf.zeros([1, 28, 28, 1]))
     
     //allow drawing on the canvas 
     allowDrawing()
