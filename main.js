@@ -250,7 +250,7 @@ async function start(cur_mode) {
     //load the model 
     model = await tf.loadLayersModel('mnist/model.json')
     modelCNN = await tf.loadLayersModel('model/CNN/model.json')
-    modelReg = await tf.loadLayersModel('model/CNN/model.json') //await tf.loadLayersModel('model/regularization/model.json')
+    modelReg = await tf.loadLayersModel('model/reg/model.json') //await tf.loadLayersModel('model/regularization/model.json')
     
     //warm up 
     model.predict(tf.zeros([1, 28, 28, 1]))
