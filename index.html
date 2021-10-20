@@ -1,31 +1,86 @@
-<!--
-Copyright 2018 Google LLC. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-==============================================================================
--->
-
 <!doctype html>
-
 <head>
-  <title>Handwritten digit recognition</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Experiment with handwritten digit recognition</title>
 </head>
 
 <style>
-  
+	* {
+		font-family: Calibri;
+		max-width: 750px;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: justify;
+	}
+	
+	h1{	
+		font-size: 40px;
+		text-align:center;
+	}
+	
+	img{
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.weights, table{
+		width: 100%;
+	}
+	
+	td {
+		text-align: center;
+		background-color: #C5DBE0;
+		font-size: 20px;
+	}
+
+	/*Colorings the axis of the table*/
+	td:nth-child(1), th {
+		background-color: #24F258;
+		font-weight: 900;
+		font-size: 20px;
+	}
+	
+	/*.row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	
+	.column {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+		flex-wrap:wrap;
+		flex: 1;
+		margin: 3rem;
+		min-width: 40%;
+	}*/	
+	
+	.canvas-container {
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	
+	h2 {
+	  display: flex;
+	  flex-direction: row;
+	}
+	h2:before, h2:after{
+	  content: "";
+	  flex: 1 1;
+	  border-bottom: 1px solid;
+	  margin: auto;
+	}
+	h2:before {
+	  margin-right: 10px
+	}
+	h2:after {
+	  margin-left: 10px
+	}
+	
 </style>
+
 
 <!-- TensorFlow.js script -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"> </script>
@@ -37,137 +92,194 @@ limitations under the License.
 <script src="fabric.js"></script>
 	
 <!-- main script -->
-<script src = "main.js" > </script>
-
-<style>
-	table, th, td {
-	  border:1px solid black;
-	}
-</style>
+<script src = "main.js" ></script>
 
 <body>
   <div class="tfjs-example-container">
 	<section class='title-area'>
-	<h1>Handwritten digit recognition</h1>
+	<h1>Experiment with handwritten digit recognition</h1>
 	</section>
-	<section>
-		<p> All the models use the Cross Entropy loss-function. Both the basic model and the one with regualrization have a accuracy of 90% on 10 epochs with a learning rate of 0.1.</p> 
-			<p>The regularization is using L2-regularization with a lambda of 0.005 and </p>
-		<p>The CNN model have a accuracy of 99%</p>
-		<p>The basic and regularization is simply a fully connect neural network. It takes the input flattens it and dense it to the 10 classes. We can plot the weights for them:</p>
-		<img src="basic_weights.png" alt="weights of the basic model">
-		<img src="reg_weights.png" alt="weights of the regularization model">
+		<section>
+			<h2>Introduction</h2>
+			<p>
+				During the <a href="https://kursuskatalog.au.dk/da/course/107654/Deep-Learning-for-Visual-Recognition">Deep Learning for Visual Recognition<a> 
+				course at Aarhus Universe I was inspired to experiment with the MNIST dataset 
+				and to try and use the Github Pages system for hosting a webapp to show, test and 
+				compare the different models. 
+			</p>
+			<p>
+				This project is heavily inspired by my course lecturer Henrik Pedersen similar  
+				<a href="https://klaverhenrik.github.io/sketcher/">project</a>. As mentioned on his 
+				project page he was further inspired by  
+				<a href="https://github.com/zaidalyafeai/zaidalyafeai.github.io/tree/master/sketcher">Zaid Alyfeai</a>.
+			</p>
+			<p>
+			It's possible to try drawing your own digit in the square either to the right or in the bottom 
+			of the page depending on the window size and view the predictions of the different models.
+			The models have different strength and weaknesses depending on where in square you draw, the brush size used and the size of the digit. 
+			An experiment for the reader could be to try and figure out how the different models works before reading the models section which describes 
+			the models architectures.
+			</p>
+		</section>
+		<section>
+		<h2>Trying</h2>
+		<canvas id="canvas" width="300" height="300" class="canvas" style="border:1px solid #b9bfc9;margin-top:25px"></canvas>
+		<input type="range" min="10" max="40" value="25" id="myRange" style ='margin-top:40px; display:block; margin-right: auto; margin-left: auto;'>
+		<button type="button" onclick ='erase()' style ='display:block;  margin-right: auto; margin-left: auto;' disabled>Clear</button>
 		
-		<p>The CNN2 uses the same architecture as the CNN however been using the RMSprop optimizer (with learning_rate=0.0001 and decay=1e-6) instead of SDG. It also uses a DataImageGenerator that have the folowing settings:</p>
-		<ul>
-			<li>rotation_range=35</li>
-			<li>width_shift_range=0.2</li>
-			<li>height_shift_range=0.2</li>
-			<li>zoom_range=[0.7,2.5]</li>
-		</ul>
-		<p>It didn't seem to learn anything when using SGD it might have been due to being stuck in a local minima or saddle point.</p>
-		<p>It's been runnning for 40 epochs with a batch size of 64, taking about 30 minutes to get a training loss of 0.2638, training accuracy of 0.9220 and a validation loss of 0.1815 and calidation accuracy of 0.9461</p>
-    </section>
-	<section>
-		<p class='section-head'>Status</p>
-		<p id ='status' >Loading Model... </p>
-	</section>
-
-	<p>Draw a digit!</p>
-	<div class="row_res">
-		<div class="col_res" style ='margin-left:100px;'>
-			<canvas id="canvas" width="300" height="300" class="canvas" style="border:1px solid #b9bfc9;margin-top:25px;"></canvas>
-			<div class="btn-group" style = 'margin-top:40px; '>
-				<input type="range" min="10" max="40" value="25" class="slider" id="myRange" style ='margin-top:20px;'>
-				<button type="button" class="btn btn-outline-primary" onclick ='erase()' style ='margin-left:10px;' disabled>Clear</button>
-			</div>   
-		</div>
-	</div>  
-	  <table>
-		<tr>
-			<th>Label</th>
-			<th>Basic</th>
-			<th>Regularization</th>
-			<th>CNN</th>
-			<th>CNN2</th>
-		</tr>
-		<tr>
-			<td>0</td>
-			<td><span id = "prob0basic" ></span></td>
-			<td><span id = "prob0reg" ></span></td>
-			<td><span id = "prob0cnn" ></span></td>
-			<td><span id = "prob0cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>1</td>
-			<td><span id = "prob1basic" ></span></td>
-			<td><span id = "prob1reg" ></span></td>
-			<td><span id = "prob1cnn" ></span></td>
-			<td><span id = "prob1cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td><span id = "prob2basic" ></span></td>
-			<td><span id = "prob2reg" ></span></td>
-			<td><span id = "prob2cnn" ></span></td>
-			<td><span id = "prob2cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>3</td>
-			<td><span id = "prob3basic" ></span></td>
-			<td><span id = "prob3reg" ></span></td>
-			<td><span id = "prob3cnn" ></span></td>
-			<td><span id = "prob3cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>4</td>
-			<td><span id = "prob4basic" ></span></td>
-			<td><span id = "prob4reg" ></span></td>
-			<td><span id = "prob4cnn" ></span></td>
-			<td><span id = "prob4cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>5</td>
-			<td><span id = "prob5basic" ></span></td>
-			<td><span id = "prob5reg" ></span></td>
-			<td><span id = "prob5cnn" ></span></td>
-			<td><span id = "prob5cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>6</td>
-			<td><span id = "prob6basic" ></span></td>
-			<td><span id = "prob6reg" ></span></td>
-			<td><span id = "prob6cnn" ></span></td>
-			<td><span id = "prob6cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>7</td>
-			<td><span id = "prob7basic" ></span></td>
-			<td><span id = "prob7reg" ></span></td>
-			<td><span id = "prob7cnn" ></span></td>
-			<td><span id = "prob7cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>8</td>
-			<td><span id = "prob8basic" ></span></td>
-			<td><span id = "prob8reg" ></span></td>
-			<td><span id = "prob8cnn" ></span></td>
-			<td><span id = "prob8cnn2" ></span></td>
-		</tr>
-		<tr>
-			<td>9</td>
-			<td><span id = "prob9basic" ></span></td>
-			<td><span id = "prob9reg" ></span></td>
-			<td><span id = "prob9cnn" ></span></td>
-			<td><span id = "prob9cnn2" ></span></td>
-		</tr>
-	</table>
-    	
+		<table>
+			<tr>
+				<th>Label</th>
+				<th>Basic</th>
+				<th>Regularization</th>
+				<th>CNN</th>
+				<th>CNN AUGM</th>
+			</tr>
+			<tr>
+				<td>0</td>
+				<td><span id = "prob0basic" ></span></td>
+				<td><span id = "prob0reg" ></span></td>
+				<td><span id = "prob0cnn" ></span></td>
+				<td><span id = "prob0cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td><span id = "prob1basic" ></span></td>
+				<td><span id = "prob1reg" ></span></td>
+				<td><span id = "prob1cnn" ></span></td>
+				<td><span id = "prob1cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><span id = "prob2basic" ></span></td>
+				<td><span id = "prob2reg" ></span></td>
+				<td><span id = "prob2cnn" ></span></td>
+				<td><span id = "prob2cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><span id = "prob3basic" ></span></td>
+				<td><span id = "prob3reg" ></span></td>
+				<td><span id = "prob3cnn" ></span></td>
+				<td><span id = "prob3cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><span id = "prob4basic" ></span></td>
+				<td><span id = "prob4reg" ></span></td>
+				<td><span id = "prob4cnn" ></span></td>
+				<td><span id = "prob4cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td><span id = "prob5basic" ></span></td>
+				<td><span id = "prob5reg" ></span></td>
+				<td><span id = "prob5cnn" ></span></td>
+				<td><span id = "prob5cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td><span id = "prob6basic" ></span></td>
+				<td><span id = "prob6reg" ></span></td>
+				<td><span id = "prob6cnn" ></span></td>
+				<td><span id = "prob6cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td><span id = "prob7basic" ></span></td>
+				<td><span id = "prob7reg" ></span></td>
+				<td><span id = "prob7cnn" ></span></td>
+				<td><span id = "prob7cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>8</td>
+				<td><span id = "prob8basic" ></span></td>
+				<td><span id = "prob8reg" ></span></td>
+				<td><span id = "prob8cnn" ></span></td>
+				<td><span id = "prob8cnn2" ></span></td>
+			</tr>
+			<tr>
+				<td>9</td>
+				<td><span id = "prob9basic" ></span></td>
+				<td><span id = "prob9reg" ></span></td>
+				<td><span id = "prob9cnn" ></span></td>
+				<td><span id = "prob9cnn2" ></span></td>
+			</tr>
+		</table>
+		
+		</section>
+		<section>
+		<h2>Models</h2>
+			<h3>Basic & Regularization</h3>
+			<p>During the course we did experiment with the MNIST dataset in the exercises and the models I'd 
+			named <i>Basic</i> and <i>Regularization</i> was showed in these exercises. They use the same 
+			<i>Fully Connected</i> architecture  but the <i>Regularization</i> one segregate by using the <i>L2-regularization</i>
+			technique.
+			We can easily visualize the effect of this by plotting their weights.
+			</p>
+			<h4>The basic model's weights</h4>
+			<img class="weights" src="basic_weights.png" alt="weights of the basic model">
+			<h4>The model using L2-regularization's weights</h4>
+			<img class="weights" src="reg_weights.png" alt="weights of the regularization model">
+			<p>
+			As can be seen the first model have a lot of <i>noisy weights</i> since it has not seen any data 
+			in those regions. This means that we cannot know how the model will react if it sees data in those regions. 
+			</p>
+			<p>
+			In the model using regularization however we penalize the weights that doesn't have an impact 
+			by making them less important. 
+			</p>
+			<p>
+			Both the models use the Cross-Entropy Loss Function with Stochastic Gradient Descent (SGD) using a 
+			earning rate of 0.1. This result in an accuracy of 90% for 10 epochs taking less than a minute on Google Colab (using GPU).
+			The regularization model uses a L2-lambda of 0.005.
+			</p>
+			<p>
+			The architecture  is basically to <i>flatten</i> the input image and then <i>dense</i> to the 10 classes.
+			</p>
+			<img src="basic_model_summary.png" alt="Summary of the basis and regularization model">
+			
+			<h3>The Convolutional Neural Network (CNN)</h3>
+			<p>
+			Instead of having a fully connect network we in this model uses a convolutional neural network. 
+			The architecture is much more complex than the <i>basic</i> and <i>regularization</i>. It uses a 
+			combination of convolution and max-pooling layers. The summary looks like this:
+			</p>
+			<img src="cnn_model_summary.png" alt="Summary of the Convolutional Neural Network model">
+			<p>
+			Training this model also takes less than a minute with GPU on Google Colab and achieves an accuracy of 99%.
+			</p>
+			
+			<h3>The CNN with data augmentation (CNN AUGM)</h3>
+			<p>
+			This model uses the same model as the first CNN, but it has its own ImageDataGenerator for making augmentations to the pictures. 
+			A problem in the above models is that they are very dependent of the rotation and the size of the digits drawn. Using this 
+			ImageDataGenerator we can transform the training samples into being smaller or larger, being rotated and/or move their position 
+			in the image and a lot more.
+			
+			I have been using the following augmentation settings:
+			</p>
+			<ul>
+				<li>rotation_range = 35</li>
+				<li>width_shift_range = 0.2</li>
+				<li>height_shift_range = 0.2</li>
+				<li>zoom_range = [0.7, 2.5]</li>
+			</ul>
+			<p>
+			This model didn't seem to learn anything when using the <i>SGD</i> optimizer. It might have been due to being stuck 
+			in a local minima or saddle point. After switching to <i>RMSprop</i> with learning_rate=0.0001 and decay=1e-6 it started to improve. 
+			These might not be the ideal parameters, they are simply the first I've tried. In order to get above 90% accuracy, 
+			it had to train for a lot longer than the previous models.
+			I've have trained this model for 40 epochs using a batch size of 64, which took about 30 minutes using Google Colab. 
+			This resulted in an accuracy of ~92% but a validation accuracy of ~95%.
+			</p>
+		</section>
+	</div>
+	
 
 <script>
 	//Starts the drawing-pad after the models and tf have been loaded
 	start('en')
 </script>
-  </div>
 </body>
 
