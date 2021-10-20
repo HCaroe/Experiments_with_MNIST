@@ -268,9 +268,9 @@
 			<p>
 			This model didn't seem to learn anything when using the <i>SGD</i> optimizer. It might have been due to being stuck 
 			in a local minima or saddle point. After switching to <i>RMSprop</i> with learning_rate=0.0001 and decay=1e-6 it started to improve. 
-			These might not be the ideal parameters, they are simply the first I've tried. In order to get above 90% accuracy, 
+			These might not be the ideal parameters, they are simply the first I tried. In order to get above 90% accuracy, 
 			it had to train for a lot longer than the previous models.
-			I've have trained this model for 40 epochs using a batch size of 64, which took about 30 minutes using Google Colab. 
+			The model is trained for 40 epochs using a batch size of 64, which took about 30 minutes using Google Colab. 
 			This resulted in an accuracy of ~92% but a validation accuracy of ~95%.
 			</p>
 		</section>
@@ -279,7 +279,7 @@
 
 <script>
 	//Starts the drawing-pad after the models and tf have been loaded
-	start('en')
+	start()
 </script>
 </body>
 
