@@ -183,7 +183,7 @@ function getClassNames(indices) {
 load the class names 
 */
 async function loadDict() {
-	loc = 'mnist/class_names.txt'
+	loc = 'model/class_names.txt'
     
     await $.ajax({
         url: loc,
