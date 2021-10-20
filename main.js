@@ -46,16 +46,16 @@ function setTable(top5, probs, type) {
     for (var i = 0; i < 10; i++) {
 		if(type=="basic"){
 			let prob = document.getElementById('prob' + i + 'basic');
-			prob.innerHTML = Math.round(probs[i] * 100);
+			prob.innerHTML = Math.round(probs[i] * 100) + "%";
 		} else if (type == "cnn"){
 			let prob = document.getElementById('prob' + i + 'cnn');
-			prob.innerHTML = Math.round(probs[i] * 100);
+			prob.innerHTML = Math.round(probs[i] * 100) + "%";
 		} else if (type == "cnn2"){
 			let prob = document.getElementById('prob' + i + 'cnn2');
-			prob.innerHTML = Math.round(probs[i] * 100);
+			prob.innerHTML = Math.round(probs[i] * 100) + "%";
 		} else if (type == "reg"){
 			let prob = document.getElementById('prob' + i + 'reg');
-			prob.innerHTML = Math.round(probs[i] * 100);
+			prob.innerHTML = Math.round(probs[i] * 100) + "%";
 		}
     }
 
